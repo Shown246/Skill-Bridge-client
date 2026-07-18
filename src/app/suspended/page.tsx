@@ -1,0 +1,1 @@
+export default function Suspended(){return <div className="container section empty"><h1>Account suspended</h1><p>Your account has been restricted. You can still sign in, but protected SkillBridge operations are unavailable. Contact support if you believe this is an error.</p></div>}

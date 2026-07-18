@@ -1,0 +1,1 @@
+import { Suspense } from "react";import { AuthForm } from "@/components/auth-form";export default function Register(){return <div className="auth-page"><Suspense fallback={<p>Loading…</p>}><AuthForm mode="register"/></Suspense></div>}

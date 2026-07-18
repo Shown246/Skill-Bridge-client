@@ -1,0 +1,1 @@
+import { LinkButton } from "@/components/ui";export default function Forbidden(){return <div className="container section empty"><h1>That area isn’t available</h1><p>Your account role does not have access to this page.</p><LinkButton href="/">Return home</LinkButton></div>}

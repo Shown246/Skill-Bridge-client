@@ -1,0 +1,1 @@
+import { DashboardShell } from "@/components/dashboard-shell";import { requireRole } from "@/lib/server-auth";export default async function Layout({children}:{children:React.ReactNode}){await requireRole("TUTOR");return <DashboardShell role="TUTOR">{children}</DashboardShell>}
