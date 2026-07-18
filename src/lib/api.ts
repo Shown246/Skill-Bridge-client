@@ -39,4 +39,4 @@ export async function apiFetch<T>(path: string, init: RequestInit & { auth?: boo
   return body as T;
 }
 
-export const errorMessage = (error: unknown) => error instanceof ApiError ? `${error.message}${error.requestId ? ` (Request ID: ${error.requestId})` : ""}` : "Something went wrong. Please try again.";
+export const errorMessage = (error: unknown) => error instanceof ApiError ? `${error.message}${error.requestId ? ` (Request ID: ${error.requestId})` : ""}` : error instanceof Error ? error.message : "Something went wrong. Please try again.";

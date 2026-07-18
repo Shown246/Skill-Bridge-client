@@ -9,7 +9,8 @@ import { useRouter } from "next/navigation";
 
 export function SiteNav() {
   const router = useRouter();
-  const me = useQuery({ queryKey:["me"], queryFn:() => apiFetch<Success<User>>("/api/v1/me", { auth:true }).then(r=>r.data), retry:false });
+  const session = authClient.useSession();
+  const me = useQuery({ queryKey:["me"], queryFn:() => apiFetch<Success<User>>("/api/v1/me", { auth:true }).then(r=>r.data), retry:false, enabled:Boolean(session.data) });
   const dashboard = me.data ? `/${me.data.role.toLowerCase()}` : "/login";
   return <header className="site-header"><div className="container nav">
     <Link href="/" className="brand"><span className="brand-mark"><BookOpen size={21}/></span>SkillBridge</Link>
