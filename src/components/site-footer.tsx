@@ -1,0 +1,2 @@
+import Link from "next/link";
+export function SiteFooter(){return <footer className="footer"><div className="container footer-grid"><div><h3>SkillBridge</h3><p>Thoughtful one-to-one learning, built around your goals.</p></div><div><strong>Explore</strong><p><Link href="/tutors">Find tutors</Link></p><p><Link href="/register">Become a tutor</Link></p></div><div><strong>Account</strong><p><Link href="/login">Sign in</Link></p><p><Link href="/register">Create account</Link></p></div></div></footer>}
