@@ -1,0 +1,9 @@
+node_modules/
+node_modules.broken/
+package-lock.broken.json
+.next/
+.env*
+!.env.example
+npm-debug.log*
+.vercel/
+*.tsbuildinfo
