@@ -1,0 +1,8 @@
+"use client";
+import { useState } from "react";
+import { useMutation } from "@tanstack/react-query";
+import { toast } from "sonner";
+import { apiFetch, errorMessage } from "@/lib/api";
+import type { Review, Success } from "@/lib/types";
+import { Button, Field, Textarea } from "./ui";
+export function ReviewForm({bookingId,onDone}:{bookingId:string;onDone:()=>void}){const[rating,setRating]=useState(0),[comment,setComment]=useState("");const submit=useMutation({mutationFn:()=>apiFetch<Success<Review>>(`/api/v1/bookings/${bookingId}/review`,{auth:true,method:"POST",body:JSON.stringify({rating,comment:comment.trim()})}),onSuccess:()=>{toast.success("Your review is now published and cannot be edited.");onDone()},onError:e=>toast.error(errorMessage(e))});const valid=rating>=1&&rating<=5&&comment.trim().length>=10&&comment.trim().length<=2000;return <div className="card form-grid"><h2>Review this session</h2><fieldset style={{border:0,padding:0}}><legend><strong>Rating</strong></legend><div>{[1,2,3,4,5].map(n=><button type="button" key={n} onClick={()=>setRating(n)} aria-label={`${n} star${n>1?"s":""}`} aria-pressed={rating===n} style={{fontSize:"2rem",background:"none",border:0,color:n<=rating?"#b45309":"#aaa",cursor:"pointer"}}>★</button>)}</div></fieldset><Field label="Comment" hint={`${comment.trim().length}/2000 · At least 10 characters`}><Textarea required minLength={10} maxLength={2000} value={comment} onChange={e=>setComment(e.target.value)}/></Field><Button disabled={!valid||submit.isPending} onClick={()=>submit.mutate()}>{submit.isPending?"Publishing…":"Publish immutable review"}</Button></div>}
