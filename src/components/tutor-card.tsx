@@ -1,0 +1,5 @@
+import Link from "next/link";
+import { Avatar } from "./ui";
+import { formatMoney } from "@/lib/format";
+import type { Tutor } from "@/lib/types";
+export function TutorCard({tutor}:{tutor:Tutor}){return <article className="card tutor-card"><div className="tutor-head"><Avatar name={tutor.user.name} image={tutor.user.image}/><div><h3><Link href={`/tutors/${tutor.id}`}>{tutor.user.name}</Link></h3><span className="stars" aria-label={`${tutor.averageRating.toFixed(1)} out of 5 stars`}>★ {tutor.averageRating.toFixed(1)}</span> <span className="muted">({tutor.reviewCount})</span></div></div><div><p>{tutor.headline}</p><div className="chips">{tutor.categories.slice(0,3).map(({category})=><span className="chip" key={category.id}>{category.name}</span>)}</div></div><div className="card-footer"><span><strong>{formatMoney(tutor.hourlyRate,tutor.currencyCode)}</strong><small className="muted"> / hour</small></span><Link href={`/tutors/${tutor.id}`} className="button button-secondary">View profile</Link></div></article>}
