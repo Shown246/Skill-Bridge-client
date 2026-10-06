@@ -1,1 +1,105 @@
-"use client";import{useState}from"react";import{useMutation,useQuery,useQueryClient}from"@tanstack/react-query";import{toast}from"sonner";import{apiFetch,errorMessage}from"@/lib/api";import{formatDateTime,formatMoney}from"@/lib/format";import type{Booking,BookingStatus,Success}from"@/lib/types";import{Badge,Button,ErrorState,Field,Select,Textarea}from"./ui";export function AdminBookingDetail({id}:{id:string}){const qc=useQueryClient(),[status,setStatus]=useState(""as BookingStatus|""),[reason,setReason]=useState("");const q=useQuery({queryKey:["booking",id],queryFn:()=>apiFetch<Success<Booking>>(`/api/v1/bookings/${id}`,{auth:true}).then(r=>r.data)});const change=useMutation({mutationFn:()=>apiFetch<Success<Booking>>(`/api/v1/admin/bookings/${id}/status`,{auth:true,method:"PATCH",body:JSON.stringify({status,reason:reason.trim()})}),onSuccess:()=>{toast.success("Booking status overridden.");setStatus("");setReason("");qc.invalidateQueries({queryKey:["booking",id]});qc.invalidateQueries({queryKey:["admin-bookings"]})},onError:e=>toast.error(errorMessage(e))});if(q.isPending)return <p>Loading booking…</p>;if(q.isError)return <ErrorState error={q.error} retry={()=>q.refetch()}/>;const b=q.data,tutor=b.tutorProfile||b.tutor;return <section><header className="page-head"><span className="eyebrow">Admin booking detail</span><h1>{b.category?.name||"Session"}</h1><Badge>{b.status}</Badge></header><div className="split"><div className="card"><p><strong>Student:</strong> {b.student?.name}</p><p><strong>Tutor:</strong> {tutor?.user.name}</p><p><strong>Time:</strong> {formatDateTime(b.startAt)} – {formatDateTime(b.endAt)}</p><p><strong>Quote:</strong> {formatMoney(b.quotedPrice,b.currencyCode)}</p>{b.review&&<p><strong>Reviewed:</strong> {b.review.rating}/5 — this completed booking cannot be moved away from completed.</p>}</div><div className="card form-grid"><h2>Administrative override</h2><p className="muted">This bypasses normal participant workflow. Only backend-authorized transitions are shown.</p><Field label="New status"><Select value={status} onChange={e=>setStatus(e.target.value as BookingStatus)}><option value="">Choose transition</option>{b.allowedAdminTransitions?.map(s=><option key={s}>{s}</option>)}</Select></Field><Field label="Reason (required)"><Textarea required maxLength={1000} value={reason} onChange={e=>setReason(e.target.value)}/></Field><Button className="button-danger" disabled={!status||!reason.trim()||change.isPending} onClick={()=>change.mutate()}>Apply override</Button></div></div>{b.statusHistory?.length&&<div className="section"><h2>Status history</h2>{b.statusHistory.map(h=><div className="card" style={{marginBottom:".6rem"}} key={h.id}><strong>{h.toStatus}</strong> · {formatDateTime(h.createdAt)}{h.reason&&<p>{h.reason}</p>}</div>)}</div>}</section>}
+"use client";
+import { useState } from "react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
+import { apiFetch, errorMessage } from "@/lib/api";
+import { formatDateTime, formatMoney } from "@/lib/format";
+import type { Booking, BookingStatus, Success } from "@/lib/types";
+import { Badge, Button, ErrorState, Field, Select, Textarea } from "./ui";
+
+export function AdminBookingDetail({ id }: { id: string }) {
+  const qc = useQueryClient();
+  const [status, setStatus] = useState<BookingStatus | "">("");
+  const [reason, setReason] = useState("");
+  const q = useQuery({
+    queryKey: ["booking", id],
+    queryFn: () => apiFetch<Success<Booking>>(`/api/v1/bookings/${id}`, { auth: true }).then((r) => r.data),
+  });
+
+  const change = useMutation({
+    mutationFn: () =>
+      apiFetch<Success<Booking>>(`/api/v1/admin/bookings/${id}/status`, {
+        auth: true,
+        method: "PATCH",
+        body: JSON.stringify({ status, reason: reason.trim() }),
+      }),
+    onSuccess: (res) => {
+      toast.success("Booking status overridden.");
+      setStatus("");
+      setReason("");
+      if (res?.data) {
+        qc.setQueryData(["booking", id], res.data);
+      }
+      qc.invalidateQueries({ queryKey: ["booking", id] });
+      qc.invalidateQueries({ queryKey: ["admin-bookings"] });
+    },
+    onError: (e) => toast.error(errorMessage(e)),
+  });
+
+  if (q.isPending) return <p>Loading booking…</p>;
+  if (q.isError) return <ErrorState error={q.error} retry={() => q.refetch()} />;
+
+  const b = q.data;
+  const tutor = b.tutorProfile || b.tutor;
+
+  return (
+    <section>
+      <header className="page-head">
+        <span className="eyebrow">Admin booking detail</span>
+        <h1>{b.category?.name || "Session"}</h1>
+        <Badge tone={b.status === "COMPLETED" ? "good" : b.status === "CANCELLED" ? "bad" : "warn"}>
+          {b.status}
+        </Badge>
+      </header>
+      <div className="split">
+        <div className="card">
+          <p><strong>Student:</strong> {b.student?.name}</p>
+          <p><strong>Tutor:</strong> {tutor?.user.name}</p>
+          <p><strong>Time:</strong> {formatDateTime(b.startAt)} – {formatDateTime(b.endAt)}</p>
+          <p><strong>Quote:</strong> {formatMoney(b.quotedPrice, b.currencyCode)}</p>
+          {b.review && (
+            <p><strong>Reviewed:</strong> {b.review.rating}/5 — this completed booking cannot be moved away from completed.</p>
+          )}
+        </div>
+        <div className="card form-grid">
+          <h2>Administrative override</h2>
+          <p className="muted">This bypasses normal participant workflow. Only backend-authorized transitions are shown.</p>
+          <Field label="New status">
+            <Select value={status} onChange={(e) => setStatus(e.target.value as BookingStatus)}>
+              <option value="">Choose transition</option>
+              {b.allowedAdminTransitions?.map((s) => (
+                <option key={s}>{s}</option>
+              ))}
+            </Select>
+          </Field>
+          <Field label="Reason (required)">
+            <Textarea
+              required
+              maxLength={1000}
+              value={reason}
+              onChange={(e) => setReason(e.target.value)}
+            />
+          </Field>
+          <Button
+            className="button-danger"
+            disabled={!status || !reason.trim() || change.isPending}
+            onClick={() => change.mutate()}
+          >
+            Apply override
+          </Button>
+        </div>
+      </div>
+      {b.statusHistory?.length ? (
+        <div className="section">
+          <h2>Status history</h2>
+          {b.statusHistory.map((h) => (
+            <div className="card" style={{ marginBottom: ".6rem" }} key={h.id}>
+              <strong>{h.toStatus}</strong> · {formatDateTime(h.createdAt)}
+              {h.reason && <p>{h.reason}</p>}
+            </div>
+          ))}
+        </div>
+      ) : null}
+    </section>
+  );
+}

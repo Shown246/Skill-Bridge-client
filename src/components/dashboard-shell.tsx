@@ -1,4 +1,46 @@
+"use client";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import type { UserRole } from "@/lib/types";
-const links:Record<UserRole,{href:string;label:string}[]>={STUDENT:[{href:"/student",label:"Overview"},{href:"/student/bookings",label:"Bookings"},{href:"/student/profile",label:"Profile"}],TUTOR:[{href:"/tutor",label:"Overview"},{href:"/tutor/profile",label:"Teaching profile"},{href:"/tutor/availability",label:"Availability"},{href:"/tutor/bookings",label:"Bookings"}],ADMIN:[{href:"/admin",label:"Overview"},{href:"/admin/users",label:"Users"},{href:"/admin/tutors",label:"Tutor moderation"},{href:"/admin/bookings",label:"Bookings"},{href:"/admin/categories",label:"Categories"}]};
-export function DashboardShell({role,children}:{role:UserRole;children:React.ReactNode}){return <div className="dashboard"><aside className="sidebar"><nav aria-label={`${role.toLowerCase()} navigation`}>{links[role].map(l=><Link href={l.href} key={l.href}>{l.label}</Link>)}</nav></aside><div className="dash-main">{children}</div></div>}
+
+const links: Record<UserRole, { href: string; label: string }[]> = {
+  STUDENT: [
+    { href: "/student", label: "Overview" },
+    { href: "/student/bookings", label: "Bookings" },
+    { href: "/student/profile", label: "Profile" },
+  ],
+  TUTOR: [
+    { href: "/tutor", label: "Overview" },
+    { href: "/tutor/profile", label: "Teaching profile" },
+    { href: "/tutor/availability", label: "Availability" },
+    { href: "/tutor/bookings", label: "Bookings" },
+  ],
+  ADMIN: [
+    { href: "/admin", label: "Overview" },
+    { href: "/admin/users", label: "Users" },
+    { href: "/admin/tutors", label: "Tutor moderation" },
+    { href: "/admin/bookings", label: "Bookings" },
+    { href: "/admin/categories", label: "Categories" },
+  ],
+};
+
+export function DashboardShell({ role, children }: { role: UserRole; children: React.ReactNode }) {
+  const pathname = usePathname();
+  return (
+    <div className="dashboard">
+      <aside className="sidebar">
+        <nav aria-label={`${role.toLowerCase()} navigation`}>
+          {links[role].map((l) => {
+            const isActive = pathname === l.href;
+            return (
+              <Link href={l.href} key={l.href} aria-current={isActive ? "page" : undefined}>
+                {l.label}
+              </Link>
+            );
+          })}
+        </nav>
+      </aside>
+      <div className="dash-main">{children}</div>
+    </div>
+  );
+}

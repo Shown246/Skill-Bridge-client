@@ -1,4 +1,4 @@
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { env } from "./env";
 import type { Success, User, UserRole } from "./types";
@@ -18,7 +18,11 @@ export async function getServerUser(): Promise<User | null> {
 
 export async function requireRole(role: UserRole): Promise<User> {
   const user = await getServerUser();
-  if (!user) redirect(`/login?returnTo=/${role.toLowerCase()}`);
+  if (!user) {
+    const headerList = await headers();
+    const pathname = headerList.get("x-pathname") || `/${role.toLowerCase()}`;
+    redirect(`/login?returnTo=${encodeURIComponent(pathname)}`);
+  }
   if (user.status === "BANNED") redirect("/suspended");
   if (user.role !== role) redirect("/forbidden");
   return user;
