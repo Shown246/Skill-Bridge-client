@@ -1,52 +1,74 @@
-# SkillBridge frontend
+# SkillBridge
 
-A standalone Next.js 16 App Router client for the SkillBridge tutoring marketplace. It uses strict TypeScript, Tailwind CSS, TanStack Query, Better Auth 1.6, React Hook Form-compatible validation dependencies, Decimal.js, date-fns, Sonner, Lucide, and accessible semantic components.
+SkillBridge is an online tutoring platform designed to connect eager learners with skilled, verified tutors. Whether you are looking to master a new academic subject, learn a new skill, or share your knowledge with students around the world, SkillBridge provides an intuitive and reliable space to schedule and manage one-on-one sessions.
 
-## Local setup
+---
 
-1. Use Node.js 20.9 or newer and npm.
-2. Copy `.env.example` to `.env.local`.
-3. Start the SkillBridge backend on `http://localhost:5000` with its `FRONTEND_ORIGIN` set to `http://localhost:3000`.
-4. Run `npm install`, then `npm run dev`.
-5. Open `http://localhost:3000`.
+## What is SkillBridge?
 
-The browser keeps the short-lived business API JWT in memory only. Better Auth maintains its own HTTP-only session cookie. Protected server layouts forward the incoming cookie to `/api/auth/token`, validate the resulting user through `/api/v1/me`, and enforce role and ban state before rendering.
+Finding the right tutor should be straightforward, transparent, and dependable. SkillBridge brings students and educators together on a single platform with clear schedules, upfront pricing, and verified reviews. 
 
-## Commands
+The web application handles the entire scheduling journey—from discovering qualified instructors to booking a time slot that fits your schedule, managing your calendar, and leaving feedback after your session.
 
-```bash
-npm run dev
-npm run lint
-npm run typecheck
-npm run build
-npm start
-```
+---
 
-## Environment
+## Who is SkillBridge For?
 
-| Variable | Local default | Purpose |
-|---|---|---|
-| `NEXT_PUBLIC_API_BASE_URL` | `http://localhost:5000` | SkillBridge business API origin |
-| `NEXT_PUBLIC_AUTH_BASE_URL` | `http://localhost:5000` | Better Auth origin |
-| `NEXT_PUBLIC_APP_NAME` | `SkillBridge` | Product name |
-| `NEXT_PUBLIC_DEFAULT_CURRENCY` | `USD` | Fallback display currency |
+### For Students
+* **Find the Perfect Match:** Search and filter tutors by subject, hourly rate, rating, and experience.
+* **Transparent Scheduling:** View tutor schedules directly in your own local time zone and pick a start time and duration that works for you.
+* **Clear Pricing:** Know the exact cost before booking, with straightforward pricing based on your chosen session length.
+* **Hassle-Free Management:** Track upcoming sessions, cancel ahead of time if your plans change, and rate your learning experience once a lesson is finished.
 
-All `NEXT_PUBLIC_*` values are visible to browsers; never put secrets in them.
+### For Tutors
+* **Showcase Your Expertise:** Build a detailed teaching profile highlighting your subjects, background, and hourly rates.
+* **Manage Your Availability:** Set recurring weekly availability so students can only book when you are actually free.
+* **Organized Bookings:** View upcoming sessions at a glance, keep track of scheduled appointments, and mark lessons complete after teaching.
+* **Build Your Reputation:** Receive verified student ratings and written reviews after completed sessions to help grow your student base.
 
-## Vercel deployment
+### For Administrators
+* **Quality Assurance:** Review and approve tutor applications before they become visible to the public.
+* **Platform Safety:** Manage user accounts, moderate community activity, and uphold platform standards.
+* **Subject Catalog:** Organize and maintain learning categories and subject listings to keep topics relevant and easy to navigate.
 
-Import the repository into Vercel, set the four public environment variables for Production/Preview, and use the standard Next.js build command. The backend must allow the deployed frontend origin through CORS and Better Auth trusted origins.
+---
 
-Authentication also requires a production cookie topology that lets the browser send the Better Auth session cookie to the configured auth backend. When frontend and backend use different subdomains, configure Better Auth's cookie domain, `Secure`, and `SameSite` settings for that topology. Validate this before launch; frontend code cannot repair a cookie that the browser does not send.
+## How It Works
 
-Administrator accounts are not created by public registration. Obtain seeded admin credentials from the backend deployment's secret/configuration owner. Do not print them in terminal output, place them in frontend environment variables, or commit them.
+1. **Create an Account:** Sign up as a student looking to learn or as a tutor ready to teach.
+2. **Explore Tutors:** Browse verified tutor profiles, read reviews from other learners, and compare teaching subjects and rates.
+3. **Book a Time:** Select an open time slot from the tutor's weekly schedule and pick your session length. Your booking is confirmed immediately.
+4. **Attend Your Lesson:** Meet with your tutor at the agreed time.
+5. **Complete and Review:** After the session concludes, your tutor marks it complete, and you can leave an honest rating and review to help other students.
 
-## Contract notes
+---
 
-- `API_DOCUMENTATION.md` is authoritative. Tutor booking lists and completion use the generic `/api/v1/bookings` endpoints.
-- Money remains a string/Decimal value until formatting. API date-times remain UTC until localized for display.
-- Slot starts, supported duration keys, `allowedActions`, and `allowedAdminTransitions` are runtime authority.
-- SkillBridge has no payment, messaging, video, calendar-sync, or review-editing interface.
-- There is no admin category-list endpoint. The category admin screen can manage currently active categories, but after deactivation a category cannot be listed or reactivated through the supported API.
+## Core Highlights
 
-See [QA_CHECKLIST.md](./QA_CHECKLIST.md) for the manual test matrix and current verification record.
+* **Verified Tutors:** Every tutor profile is reviewed by platform administrators before appearing in search results.
+* **No Double Bookings:** Automatic conflict checks ensure tutors are never double-booked for the same time slot.
+* **Automatic Time Zone Conversion:** Lesson times are automatically displayed in your local time, preventing confusion across time zones.
+* **Authentic Reviews:** Only students who have completed a booking with a tutor can submit a review, ensuring feedback is genuine and trustworthy.
+* **Simple Cancellations:** Both students and tutors can easily cancel upcoming sessions before the lesson start time if an unexpected conflict arises.
+
+---
+
+## Frequently Asked Questions
+
+#### How do payments work?
+SkillBridge currently focuses on discovery, scheduling, and session management. Lesson payments and billing arrangements are handled directly between the student and tutor outside the platform.
+
+#### How are lessons conducted?
+Once a session is confirmed, students and tutors can coordinate their preferred video or meeting platform (such as Google Meet, Zoom, or another virtual classroom tool).
+
+#### How do I become a tutor?
+Sign up and select the tutor role, complete your profile with your subjects, background, and hourly rate, and set your weekly availability. Once an administrator reviews and approves your profile, you will appear in student search results.
+
+#### What happens if I need to cancel?
+Both students and tutors can cancel an upcoming session at any time before the scheduled start time directly from their dashboard.
+
+---
+
+## Support and Feedback
+
+We are committed to providing a smooth and productive learning experience. If you have questions, encounter an issue, or have feedback on how we can improve SkillBridge, please reach out through our community support channels or contact our administrative team.
